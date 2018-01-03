@@ -22,6 +22,11 @@ allprojects {
     }
 }
 
+ext {
+    artifact = file("${rootProject.projectDir}/artifact/")
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
+    delete rootProject.ext.artifact
 }

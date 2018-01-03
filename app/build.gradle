@@ -9,7 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         def buildTime = new Date().format("yyyyMMddHHmmss")
-        def artifact = file("${project.rootDir}/artifact/")
+        def artifact = rootProject.ext.artifact
         applicationVariants.all { variant ->
             if (variant.buildType.name == "debug") {
                 //编译完成之后执行
