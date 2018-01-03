@@ -26,31 +26,31 @@
 
 1. 打开APP，点击`选择图片`
 
-    ![](Sample/step1.png)
+    ![](Samples/step1.png)
    
 2. 选择你想要切割的图片个数，这里以9图为例
 
-    ![](Sample/step2.png)
+    ![](Samples/step2.png)
   
 3. 选择你想切割的图片，并调整显示区域，调整好之后点击`完成`
 
-    ![](Sample/step3.png)
+    ![](Samples/step3.png)
 
 4. 预览朋友圈效果，如果效果满意，点击`导出切片`，如果不满意，可以重新选择图片
 
-    ![](Sample/step4.png)
+    ![](Samples/step4.png)
 
 5. 点击下方的保存路径，可以直接跳转到朋友圈发送界面
 
-    ![](Sample/step5.png)
+    ![](Samples/step5.png)
 
 6. 在朋友圈编辑好文字后，可以直接点击`发送`
 
-    ![](Sample/step6.png)
+    ![](Samples/step6.png)
 
 7. 发送到朋友圈之后如下图
 
-    ![](Sample/sample.png)
+    ![](Samples/sample.png)
     
 ## 工程结构
 
