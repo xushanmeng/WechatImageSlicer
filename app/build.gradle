@@ -1,0 +1,59 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "com.samon.wechatimageslicer"
+        minSdkVersion 21
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        def buildTime = new Date().format("yyyyMMddHHmmss")
+        def artifact = file("${project.rootDir}/artifact/")
+        applicationVariants.all { variant ->
+            if (variant.buildType.name == "debug") {
+                //编译完成之后执行
+                variant.assemble.doLast {
+                    variant.outputs.each { output ->
+                        if (!artifact.exists()) {
+                            artifact.mkdirs()
+                        }
+                        def apkName = "${variant.applicationId}-${buildTime}-debug.apk"
+                        copy {
+                            from output.outputFile
+                            into artifact
+                            rename(output.outputFile.getName(), apkName)
+                        }
+                        println "\nCopy ${apkName} SUCCESSFUL"
+                    }
+                }
+            }
+        }
+    }
+    buildTypes {
+        debug {
+            zipAlignEnabled true
+            debuggable true
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            res.srcDirs = ['res']
+            aidl.srcDirs = ['aidl']
+            jniLibs.srcDirs = ['libs']
+            assets.srcDirs = ['assets']
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'com.android.support:support-annotations:27.0.2'
+}

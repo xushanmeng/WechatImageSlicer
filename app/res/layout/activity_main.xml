@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f8f8f8"
+    tools:context="com.samon.wechatimageslicer.MainActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/layout_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/colorPrimary">
+
+        <Button
+            android:id="@+id/btn_select"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:onClick="choose"
+            android:text="选择图片"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:onClick="save"
+            android:text="导出切片"
+            android:textColor="#FFFFFF" />
+    </RelativeLayout>
+
+
+    <ImageView
+        android:id="@+id/iv_user_head"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/layout_title"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        android:background="#2f9c91"
+        android:scaleType="fitXY"
+        android:src="@mipmap/ic_launcher_round" />
+
+    <TextView
+        android:id="@+id/tv_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_title"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="30dp"
+        android:layout_toRightOf="@id/iv_user_head"
+        android:text="效果预览"
+        android:textColor="#60748a"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_user"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/iv_user_head"
+        android:text="下图是发送到朋友圈后的效果"
+        android:textColor="#3c3c3c"
+        android:textSize="14sp" />
+
+    <RelativeLayout
+        android:id="@+id/layout_images"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/iv_user_head">
+
+
+        <ImageView
+            android:id="@+id/iv_image1"
+            android:layout_width="80.04dp"
+            android:layout_height="80.04dp"
+            android:layout_marginBottom="2.88dp"
+            android:layout_marginRight="2.88dp"
+            android:background="#D0D0D0" />
+
+        <ImageView
+            android:id="@+id/iv_image2"
+            android:layout_width="80.04dp"
+            android:layout_height="80.04dp"
+            android:layout_marginBottom="2.88dp"
+            android:layout_marginRight="2.88dp"
+            android:layout_toRightOf="@id/iv_image1"
+            android:background="#D0D0D0" />
+
+        <ImageView
+            android:id="@+id/iv_image3"
+            android:layout_width="80.04dp"
+            android:layout_height="80.04dp"
+            android:layout_marginBottom="2.88dp"
+            android:layout_toRightOf="@id/iv_image2"
+            android:background="#D0D0D0" />
+
+        <ImageView
+            android:id="@+id/iv_image4"
+            android:layout_width="80.04dp"
+            android:layout_height="80.04dp"
+            android:layout_below="@id/iv_image1"
+            android:layout_marginBottom="2.88dp"
+            android:layout_marginRight="2.88dp"
+            android:background="#D0D0D0" />
+
+        <ImageView
+            android:id="@+id/iv_image5"
+            android:layout_width="80.04dp"
+            android:layout_height="80.04dp"
+            android:layout_below="@id/iv_image2"
+            android:layout_marginBottom="2.88dp"
+            android:layout_marginRight="2.88dp"
+            android:layout_toRightOf="@id/iv_image4"
+            android:background="#D0D0D0" />
+
+        <ImageView
+            android:id="@+id/iv_image6"
+            android:layout_width="80.04dp"
+            android:layout_height="80.04dp"
+            android:layout_below="@id/iv_image3"
+            android:layout_marginBottom="2.88dp"
+            android:layout_toRightOf="@id/iv_image5"
+            android:background="#D0D0D0" />
+
+        <ImageView
+            android:id="@+id/iv_image7"
+            android:layout_width="80.04dp"
+            android:layout_height="80.04dp"
+            android:layout_below="@id/iv_image4"
+            android:layout_marginRight="2.88dp"
+            android:background="#D0D0D0" />
+
+        <ImageView
+            android:id="@+id/iv_image8"
+            android:layout_width="80.04dp"
+            android:layout_height="80.04dp"
+            android:layout_below="@id/iv_image5"
+            android:layout_marginRight="2.88dp"
+            android:layout_toRightOf="@id/iv_image7"
+            android:background="#D0D0D0" />
+
+        <ImageView
+            android:id="@+id/iv_image9"
+            android:layout_width="80.04dp"
+            android:layout_height="80.04dp"
+            android:layout_below="@id/iv_image6"
+            android:layout_toRightOf="@id/iv_image8"
+            android:background="#D0D0D0" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/layout_images"
+        android:layout_below="@id/layout_images"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="刚刚"
+            android:textColor="#868686"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:text="删除"
+            android:textColor="#60748a"
+            android:textSize="13.5sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@id/layout_time"
+        android:layout_marginTop="15dp"
+        android:background="#cfcfcf" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tv_divider">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="30dp"
+            android:text="1. 选择图片，选择后可浏览效果图\n2. 导出切片，导出切片文件到本地\n3. 将切片分享到朋友圈"
+            android:textSize="15sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_result"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tv_divider"
+        android:background="#f0f0f0"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="30dp"
+            android:clickable="true"
+            android:onClick="shareSlices"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/layout_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#50000000"
+        android:visibility="gone">
+
+        <com.samon.wechatimageslicer.LiquidCircleView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"
+        android:text="Developed by Samon"
+        android:textColor="#808080"
+        android:textSize="8sp" />
+
+</RelativeLayout>
