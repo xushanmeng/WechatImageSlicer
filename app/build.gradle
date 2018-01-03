@@ -8,7 +8,6 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
-        def buildTime = new Date().format("yyyyMMddHHmmss")
         def artifact = rootProject.ext.artifact
         applicationVariants.all { variant ->
             if (variant.buildType.name == "debug") {
@@ -18,7 +17,7 @@ android {
                         if (!artifact.exists()) {
                             artifact.mkdirs()
                         }
-                        def apkName = "${variant.applicationId}-${buildTime}-debug.apk"
+                        def apkName = "${variant.applicationId}.apk"
                         copy {
                             from output.outputFile
                             into artifact
