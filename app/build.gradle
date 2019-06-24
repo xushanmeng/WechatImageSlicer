@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.samon.wechatimageslicer"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         def artifact = rootProject.ext.artifact
@@ -29,12 +29,26 @@ android {
             }
         }
     }
+    signingConfigs {
+        suning {
+            keyAlias 'samon'
+            keyPassword 'samonxu'
+            storeFile file("${rootProject.rootDir}/signapk/samon.jks")
+            storePassword 'samonxu'
+        }
+    }
     buildTypes {
-        debug {
+        release {
+            minifyEnabled true
+            debuggable false
             zipAlignEnabled true
-            debuggable true
-            minifyEnabled false
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.suning
+        }
+        debug {
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.suning
         }
     }
     sourceSets {
@@ -47,12 +61,18 @@ android {
             assets.srcDirs = ['assets']
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'com.android.support:support-annotations:27.0.2'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.3'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'com.android.support:support-annotations:28.0.0'
+    implementation 'com.github.yalantis:ucrop:2.2.3'
+    implementation 'com.github.yalantis:ucrop:2.2.3-native'
 }

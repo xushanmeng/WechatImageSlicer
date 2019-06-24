@@ -9,6 +9,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -46,33 +47,22 @@ public abstract class BitmapSlicer {
 
     @MainThread
     public final void slice() {
-        Observable.just(srcBitmap)
-                .map(new Function<Bitmap, List<Bitmap>>() {
-                    @Override
-                    public List<Bitmap> apply(Bitmap bitmap) throws Exception {
-                        return doSlice(bitmap);
-                    }
-                })
+        Disposable result = Observable.just(srcBitmap)
+                .map(this::doSlice)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Bitmap>>() {
-                    @Override
-                    public void accept(List<Bitmap> bitmaps) throws Exception {
-                        if (mListener != null) {
-                            if (bitmaps != null) {
-                                mListener.onSliceSuccess(srcBitmap, bitmaps);
-                            } else {
-                                mListener.onSliceFailed();
-                            }
-                        }
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        throwable.printStackTrace();
-                        if (mListener != null) {
+                .subscribe(bitmaps -> {
+                    if (mListener != null) {
+                        if (bitmaps != null) {
+                            mListener.onSliceSuccess(srcBitmap, bitmaps);
+                        } else {
                             mListener.onSliceFailed();
                         }
+                    }
+                }, throwable -> {
+                    throwable.printStackTrace();
+                    if (mListener != null) {
+                        mListener.onSliceFailed();
                     }
                 });
     }
@@ -122,8 +112,10 @@ public abstract class BitmapSlicer {
                 return srcW;
             case 1://源图片比例比目标比例大
                 return srcH * getAspectX() / getAspectY();
+            default:
+                return 0;
         }
-        return 0;
+
     }
 
     public final int calculateOutputY(int srcW, int srcH) {
@@ -133,8 +125,9 @@ public abstract class BitmapSlicer {
                 return srcH;
             case -1://源图片比例比目标比例小
                 return srcW * getAspectY() / getAspectX();
+            default:
+                return 0;
         }
-        return 0;
     }
 
     private int compareRate(int srcW, int srcH) {

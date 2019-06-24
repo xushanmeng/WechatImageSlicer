@@ -22,6 +22,7 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,7 @@ import com.samon.wechatimageslicer.slicer.NinePicBitmapSlicer;
 import com.samon.wechatimageslicer.slicer.SixPicBitmapSlicer;
 import com.samon.wechatimageslicer.slicer.ThreePicBitmapSlicer;
 import com.samon.wechatimageslicer.slicer.TowPicBitmapSlicer;
+import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -119,6 +121,9 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (BuildConfig.DEBUG) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
         setContentView(R.layout.activity_main);
         registerForContextMenu(findViewById(R.id.btn_select));
         progressView = findViewById(R.id.layout_progress);
@@ -184,7 +189,8 @@ public class MainActivity extends Activity {
                 bitmapSlicer = ninePicBitmapSlicer;
                 currentImageViewList = ninePicImageViews;
                 break;
-
+            default:
+                return false;
         }
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
@@ -193,15 +199,15 @@ public class MainActivity extends Activity {
     }
 
     private void initImageViews() {
-        ninePicImageViews.add((ImageView) findViewById(R.id.iv_image1));
-        ninePicImageViews.add((ImageView) findViewById(R.id.iv_image2));
-        ninePicImageViews.add((ImageView) findViewById(R.id.iv_image3));
-        ninePicImageViews.add((ImageView) findViewById(R.id.iv_image4));
-        ninePicImageViews.add((ImageView) findViewById(R.id.iv_image5));
-        ninePicImageViews.add((ImageView) findViewById(R.id.iv_image6));
-        ninePicImageViews.add((ImageView) findViewById(R.id.iv_image7));
-        ninePicImageViews.add((ImageView) findViewById(R.id.iv_image8));
-        ninePicImageViews.add((ImageView) findViewById(R.id.iv_image9));
+        ninePicImageViews.add(findViewById(R.id.iv_image1));
+        ninePicImageViews.add(findViewById(R.id.iv_image2));
+        ninePicImageViews.add(findViewById(R.id.iv_image3));
+        ninePicImageViews.add(findViewById(R.id.iv_image4));
+        ninePicImageViews.add(findViewById(R.id.iv_image5));
+        ninePicImageViews.add(findViewById(R.id.iv_image6));
+        ninePicImageViews.add(findViewById(R.id.iv_image7));
+        ninePicImageViews.add(findViewById(R.id.iv_image8));
+        ninePicImageViews.add(findViewById(R.id.iv_image9));
 
         towPickImageViews.add(ninePicImageViews.get(0));
         towPickImageViews.add(ninePicImageViews.get(1));
@@ -239,44 +245,32 @@ public class MainActivity extends Activity {
         if (!parent.exists()) {
             parent.mkdirs();
         }
-        Observable.fromArray(lastDesBitmaps.toArray(new Bitmap[]{}))
-                .map(new Function<Bitmap, File>() {
-                    @Override
-                    public File apply(Bitmap bitmap) throws Exception {
-                        int index = lastDesBitmaps.indexOf(bitmap);
-                        File file = new File(parent, prefix + "_" + (index + 1) + ".jpg");
-                        OutputStream os = new FileOutputStream(file);
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
-                        os.close();
-                        return file;
-                    }
+        Disposable disposable = Observable.fromArray(lastDesBitmaps.toArray(new Bitmap[]{}))
+                .map(bitmap -> {
+                    int index = lastDesBitmaps.indexOf(bitmap);
+                    File file = new File(parent, prefix + "_" + (index + 1) + ".jpg");
+                    OutputStream os = new FileOutputStream(file);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+                    os.close();
+                    return file;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<File>() {
-                    @Override
-                    public void accept(File file) throws Exception {
-                        Uri uri = Uri.fromFile(file);
-                        Log.d("xsm-save-files", uri.toString());
-                        slices.add(file);
-                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        throwable.printStackTrace();
-                        Toast.makeText(MainActivity.this, "导出失败", Toast.LENGTH_SHORT).show();
-                        progressView.setVisibility(View.GONE);
-                        resultView.setVisibility(View.GONE);
-                    }
-                }, new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        progressView.setVisibility(View.GONE);
-                        resultView.setVisibility(View.VISIBLE);
-                        resultTv.setText(Html.fromHtml("<font color=\"#868686\">切片已保存在</font><font color=\"#33a24e\">" + parent.getAbsolutePath() + "</font><font color=\"#868686\">，点击分享到朋友圈</font>"));
-                        resultTv.setTag(slices);
-                    }
+                .subscribe(file -> {
+                    Uri uri = Uri.fromFile(file);
+                    Log.d("xsm-save-files", uri.toString());
+                    slices.add(file);
+                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+                }, throwable -> {
+                    throwable.printStackTrace();
+                    Toast.makeText(MainActivity.this, "导出失败", Toast.LENGTH_SHORT).show();
+                    progressView.setVisibility(View.GONE);
+                    resultView.setVisibility(View.GONE);
+                }, () -> {
+                    progressView.setVisibility(View.GONE);
+                    resultView.setVisibility(View.VISIBLE);
+                    resultTv.setText(Html.fromHtml("<font color=\"#868686\">切片已保存在</font><font color=\"#33a24e\">" + parent.getAbsolutePath() + "</font><font color=\"#868686\">，点击分享到朋友圈</font>"));
+                    resultTv.setTag(slices);
                 });
     }
 
@@ -298,31 +292,28 @@ public class MainActivity extends Activity {
             final ArrayList<File> slices = (ArrayList<File>) v.getTag();
             final ArrayList<Uri> sliceUris = new ArrayList<>();
             Observable.fromArray(slices.toArray(new File[]{}))
-                    .map(new Function<File, Uri>() {
-                        @Override
-                        public Uri apply(File file) throws Exception {
-                            Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                                    , new String[]{MediaStore.Images.ImageColumns._ID, MediaStore.Images.ImageColumns.DATA}
-                                    , MediaStore.Images.ImageColumns.DATA + "=?"
-                                    , new String[]{file.getAbsolutePath()}
-                                    , null);
-                            if (cursor != null) {
-                                if (cursor.getCount() != 0) {
-                                    cursor.moveToFirst();
-                                    int id = cursor.getInt(cursor.getColumnIndex(MediaStore.Images.ImageColumns._ID));
-                                    String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA));
-                                    cursor.close();
-                                    Log.d("xsm-read-media-database", "id = " + id + ", path = " + path);
-                                    return Uri.parse(MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString() + "/" + id);
-                                } else {
-                                    cursor.close();
-                                    Log.w("xsm-read-media-database", "cursor is empty");
-                                    return null;
-                                }
+                    .map(file -> {
+                        Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                                , new String[]{MediaStore.Images.ImageColumns._ID, MediaStore.Images.ImageColumns.DATA}
+                                , MediaStore.Images.ImageColumns.DATA + "=?"
+                                , new String[]{file.getAbsolutePath()}
+                                , null);
+                        if (cursor != null) {
+                            if (cursor.getCount() != 0) {
+                                cursor.moveToFirst();
+                                int id = cursor.getInt(cursor.getColumnIndex(MediaStore.Images.ImageColumns._ID));
+                                String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA));
+                                cursor.close();
+                                Log.d("xsm-read-media-database", "id = " + id + ", path = " + path);
+                                return Uri.parse(MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString() + "/" + id);
                             } else {
-                                Log.e("xsm-read-media-database", "cursor is null");
+                                cursor.close();
+                                Log.w("xsm-read-media-database", "cursor is empty");
                                 return null;
                             }
+                        } else {
+                            Log.e("xsm-read-media-database", "cursor is null");
+                            return null;
                         }
                     }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -381,23 +372,12 @@ public class MainActivity extends Activity {
                     Toast.makeText(this, "无法读取图片", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Intent intent = new Intent("com.android.camera.action.CROP");
-                intent.setDataAndType(uri, "image/*");
-                // 下面这个crop=true是设置在开启的Intent中设置显示的VIEW可裁剪
-                intent.putExtra("crop", "true");
-                //该参数可以不设定用来规定裁剪区的宽高比
-                intent.putExtra("aspectX", bitmapSlicer.getAspectX());
-                intent.putExtra("aspectY", bitmapSlicer.getAspectY());
-                //该参数设定为你的imageView的大小
-                intent.putExtra("outputX", bitmapSlicer.calculateOutputX(w, h));
-                intent.putExtra("outputY", bitmapSlicer.calculateOutputY(w, h));
-                //是否返回bitmap对象
-                intent.putExtra("return-data", false);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
-                intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-                intent.putExtra("noFaceDetection", true);
-                startActivityForResult(intent, REQUEST_CODE_CUT);
-            } else if (requestCode == REQUEST_CODE_CUT) {
+                tempFile.delete();
+                UCrop.of(uri, Uri.fromFile(tempFile))
+                        .withAspectRatio(bitmapSlicer.getAspectX(), bitmapSlicer.getAspectY())
+                        .withMaxResultSize(bitmapSlicer.calculateOutputX(w, h), bitmapSlicer.calculateOutputY(w, h))
+                        .start(this);
+            } else if (requestCode == UCrop.REQUEST_CROP) {
                 try {
                     InputStream is = new FileInputStream(tempFile);
                     Bitmap bitmap = BitmapFactory.decodeStream(is);
